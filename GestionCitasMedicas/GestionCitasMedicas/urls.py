@@ -20,3 +20,9 @@ from django.urls import path
 urlpatterns = [
     path('admin/', admin.site.urls),
 ]
+
+from . import views
+
+urlpatterns = [
+    path('registro-paciente/', views.registrar_paciente, name='registro_paciente'),
+]
