@@ -11,6 +11,9 @@ from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 from django.contrib.auth import authenticate
+import random
+import string
+
 
 @csrf_exempt
 def registro_paciente(request):
@@ -69,3 +72,42 @@ def activar_cuenta(request, uid, token):
         return JsonResponse({'error': 'Token inválido o expirado'}, status=400)
 
 
+@csrf_exempt
+def registrar_medico(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+
+        nombre = data.get('nombre')
+        especialidad = data.get('especialidad')
+        cedula = data.get('cedula')
+        email = data.get('email')
+        telefono = data.get('telefono')
+
+        if not all([nombre, especialidad, cedula, email, telefono]):
+            return JsonResponse({'error': 'Todos los campos son obligatorios'}, status=400)
+
+        if User.objects.filter(email=email).exists():
+            return JsonResponse({'error': 'El correo ya está registrado'}, status=400)
+
+        from .models import Medico
+        if Medico.objects.filter(cedula_profesional=cedula).exists():
+            return JsonResponse({'error': 'La cédula profesional ya está registrada'}, status=400)
+
+        password_generada = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
+        user = User.objects.create_user(username=email, email=email, password=password_generada, first_name=nombre)
+        user.is_active = True
+        user.save()
+
+        medico = Medico.objects.create(
+            user=user,
+            especialidad=especialidad,
+            cedula_profesional=cedula,
+            telefono=telefono
+        )
+
+        mensaje = f"Hola Dr. {nombre},\n\nHa sido registrado en la plataforma.\n\nCorreo: {email}\nContraseña: {password_generada}"
+        send_mail('Registro en la plataforma', mensaje, settings.DEFAULT_FROM_EMAIL, [email])
+
+        return JsonResponse({'mensaje': 'Médico registrado correctamente. Se han enviado sus credenciales al correo electrónico.'})
+    
+    return JsonResponse({'error': 'Método no permitido'}, status=405)
