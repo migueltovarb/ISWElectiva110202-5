@@ -16,6 +16,7 @@ from django.contrib.auth import authenticate
 def registro_paciente(request):
     if request.method == 'POST':
         data = json.loads(request.body)
+        print("Datos recibidos desde Postman:", data)
         nombre_completo = data.get('nombre_completo')
         email = data.get('email')
         telefono = data.get('telefono')
@@ -34,13 +35,11 @@ def registro_paciente(request):
         user.is_active = False  
         user.save()
 
-       
         token = generador_token.make_token(user)
         uid = user.pk
         ruta = reverse('activar_cuenta', kwargs={'uid': uid, 'token': token})
         enlace_activacion = f"http://127.0.0.1:8000{ruta}"  
 
- 
         asunto = 'Activa tu cuenta'
         mensaje = f'Hola {nombre_completo},\n\nGracias por registrarte. Activa tu cuenta dando clic en el siguiente enlace:\n\n{enlace_activacion}'
         send_mail(asunto, mensaje, settings.DEFAULT_FROM_EMAIL, [email])
