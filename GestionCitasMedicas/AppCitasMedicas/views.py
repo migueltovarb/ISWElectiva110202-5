@@ -87,7 +87,7 @@ def registrar_medico(request):
             return JsonResponse({'error': 'Todos los campos son obligatorios'}, status=400)
 
         if User.objects.filter(email=email).exists():
-            return JsonResponse({'error': 'El correo ya está registrado'}, status=400)
+            return JsonResponse({'error': 'El correo ya esta registrado'}, status=400)
 
         from .models import Medico
         if Medico.objects.filter(cedula_profesional=cedula).exists():
