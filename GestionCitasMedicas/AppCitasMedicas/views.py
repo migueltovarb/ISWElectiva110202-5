@@ -68,4 +68,31 @@ def activar_cuenta(request, uid, token):
     else:
         return JsonResponse({'error': 'Token inválido o expirado'}, status=400)
 
+@csrf_exempt
+def login_paciente(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Formato JSON inválido'}, status=400)
 
+        email = data.get('email')
+        password = data.get('password')
+
+        if not email or not password:
+            return JsonResponse({'error': 'Email y contraseña son obligatorios'}, status=400)
+
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return JsonResponse({'error': 'Usuario no encontrado'}, status=404)
+
+        if not user.check_password(password):
+            return JsonResponse({'error': 'Contraseña incorrecta'}, status=400)
+
+        if not user.is_active:
+            return JsonResponse({'error': 'La cuenta no está activada. Revisa tu correo.'}, status=403)
+
+        return JsonResponse({'mensaje': 'Inicio de sesión exitoso'}, status=200)
+
+    return JsonResponse({'error': 'Método no permitido'}, status=405)
