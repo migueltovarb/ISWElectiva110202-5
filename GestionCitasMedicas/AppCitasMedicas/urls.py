@@ -5,7 +5,7 @@ from .password_reset_views import CustomPasswordResetView, CustomPasswordResetCo
 from django.contrib.auth import views as auth_views
 from django.urls import path
 from .password_reset_views import CustomPasswordResetView, CustomPasswordResetConfirmView, CustomPasswordResetDoneView, CustomPasswordResetCompleteView
-from .views import LoginMedicoView
+
 
 urlpatterns = [
     path('registro-paciente/', views.registro_paciente, name='registro_paciente'),
