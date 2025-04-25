@@ -25,6 +25,14 @@ from .serializers import RegistroPacienteSerializer
 from .serializers import RegistroMedicoSerializer
 from .models import Paciente
 from .serializers import PacienteSerializer, UsuarioSerializer
+from rest_framework.generics import ListAPIView
+from rest_framework.permissions import IsAdminUser
+from .models import Paciente
+from .serializers import PacienteSerializer
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from .models import Paciente
+from .serializers import PacienteSerializer
 
 @csrf_exempt
 def registro_paciente(request):
@@ -45,14 +53,22 @@ def registro_paciente(request):
         if len(password) < 8 or not re.search(r'[A-Za-z]', password) or not re.search(r'\d', password):
             return JsonResponse({'error': 'La contraseña debe tener al menos 8 caracteres, incluyendo letras y números'}, status=400)
 
+        
         user = User.objects.create_user(username=email, email=email, password=password, first_name=nombre_completo)
         user.is_active = False  
         user.save()
 
+
+        paciente = Paciente.objects.create(
+            user=user, 
+            telefono=telefono
+        )
+        paciente.save()
+
         token = generador_token.make_token(user)
         uid = user.pk
         ruta = reverse('activar_cuenta', kwargs={'uid': uid, 'token': token})
-        enlace_activacion = f"http://127.0.0.1:8000{ruta}"  
+        enlace_activacion = f"http://127.0.0.1:8000{ruta}"
 
         asunto = 'Activa tu cuenta'
         mensaje = f'Hola {nombre_completo},\n\nGracias por registrarte. Activa tu cuenta dando clic en el siguiente enlace:\n\n{enlace_activacion}'
@@ -60,7 +76,6 @@ def registro_paciente(request):
 
         return JsonResponse({'mensaje': 'Usuario registrado correctamente. Por favor, revisa tu correo para activar la cuenta.'})
 
-    return JsonResponse({'error': 'Método no permitido'}, status=405)
 
 class RegistroPacienteView(APIView):
     def post(self, request):
@@ -168,6 +183,8 @@ class LoginMedicoView(APIView):
         else:
             return Response({'error': 'Correo o contraseña incorrectos'}, status=status.HTTP_401_UNAUTHORIZED)
 
+User = get_user_model()
+
 class LoginPacienteView(APIView):
     def post(self, request):
         email = request.data.get('email')
@@ -176,9 +193,13 @@ class LoginPacienteView(APIView):
         if not email or not password:
             return Response({'error': 'Email y contraseña son obligatorios'}, status=status.HTTP_400_BAD_REQUEST)
 
-        user = authenticate(username=email, password=password)
-        if user is None:
-            return Response({'error': 'Credenciales inválidas'}, status=status.HTTP_401_UNAUTHORIZED)
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return Response({'error': 'Usuario no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+
+        if not user.check_password(password):
+            return Response({'error': 'Contraseña incorrecta'}, status=status.HTTP_401_UNAUTHORIZED)
 
         if not user.is_active:
             return Response({'error': 'Cuenta no activada. Revisa tu correo.'}, status=status.HTTP_403_FORBIDDEN)
@@ -207,5 +228,15 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
 
     def form_invalid(self, form):
         return JsonResponse({'error': 'La contraseña no cumple los requisitos.'}, status=400)
+
+
+
+
+class ListaPacientesView(APIView):
+    def get(self, request):
+        pacientes = Paciente.objects.all()
+        print("Pacientes encontrados:", pacientes) 
+        serializer = PacienteSerializer(pacientes, many=True)
+        return Response(serializer.data)
 
 
