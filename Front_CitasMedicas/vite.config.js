@@ -1,22 +1,28 @@
 import { defineConfig } from 'vite'
+import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 
+// https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(),tailwindcss()],
   test: {
-    globals: true,          // Hace disponibles expect, describe, etc. sin imports
-    environment: 'jsdom',   // Entorno de testing para componentes React
-    setupFiles: './src/setupTests.ts', // Archivo de configuración inicial
-    css: true,             // Procesa CSS/Tailwind en los tests
-    clearMocks: true,      // Limpia automáticamente los mocks entre tests
-    mockReset: true,       // Resetea los mocks completamente entre tests
+    globals: true,
+    enviroment: "jsdom",
+    setupFiles: "./src/setupTests.js",
     coverage: {
-      provider: 'v8',      // Usa el proveedor de cobertura V8
-      reporter: ['text', 'json', 'html'], // Formatos de reporte
+      provider: 'v8',
+      reporter: ["text", "html"],
+      statements: 80,
+      functions: 80,
+      lines: 80,
+      },
+      checkCoverage: true,
     },
-    // Opcional: excluir node_modules de transformación
-    exclude: ['**/node_modules/**'],
-    // Opcional: incluir solo ciertos patrones de archivos
-    include: ['**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}']
-  }
-})
+    resolve:{
+      alias: {
+        src: "/src",
+      },
+      extensions: [".js", ".jsx", ".ts", ".tsx"],
+    }
+
+  });
