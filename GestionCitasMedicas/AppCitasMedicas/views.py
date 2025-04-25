@@ -16,7 +16,6 @@ from django.contrib.auth import authenticate
 def registro_paciente(request):
     if request.method == 'POST':
         data = json.loads(request.body)
-        print("Datos recibidos desde Postman:", data)
         nombre_completo = data.get('nombre_completo')
         email = data.get('email')
         telefono = data.get('telefono')
@@ -44,7 +43,6 @@ def registro_paciente(request):
         mensaje = f'Hola {nombre_completo},\n\nGracias por registrarte. Activa tu cuenta dando clic en el siguiente enlace:\n\n{enlace_activacion}'
         send_mail(asunto, mensaje, settings.DEFAULT_FROM_EMAIL, [email])
 
-        # (Aquí más adelante agregaremos el envío de correo de confirmación)
 
         return JsonResponse({'mensaje': 'Usuario registrado correctamente. Por favor, revisa tu correo para activar la cuenta.'})
 
