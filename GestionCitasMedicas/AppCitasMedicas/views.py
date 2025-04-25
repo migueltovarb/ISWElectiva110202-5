@@ -23,7 +23,11 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
 from AppCitasMedicas.models import Medico
 from rest_framework.authtoken.models import Token
-
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from .serializers import RegistroPacienteSerializer
+from .serializers import RegistroMedicoSerializer
 
 @csrf_exempt
 def registro_paciente(request):
@@ -62,6 +66,14 @@ def registro_paciente(request):
         return JsonResponse({'mensaje': 'Usuario registrado correctamente. Por favor, revisa tu correo para activar la cuenta.'})
 
     return JsonResponse({'error': 'Método no permitido'}, status=405)
+
+class RegistroPacienteView(APIView):
+    def post(self, request):
+        serializer = RegistroPacienteSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"mensaje": "Paciente registrado correctamente"}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class TokenDeActivacion(PasswordResetTokenGenerator):
@@ -121,6 +133,15 @@ def registrar_medico(request):
         return JsonResponse({'mensaje': 'Médico registrado correctamente. Se han enviado sus credenciales al correo electrónico.'})
     
     return JsonResponse({'error': 'Método no permitido'}, status=405)
+
+class RegistroMedicoView(APIView):
+    def post(self, request):
+        serializer = RegistroMedicoSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"mensaje": "Médico registrado correctamente"}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class LoginMedicoView(APIView):
     def post(self, request):
