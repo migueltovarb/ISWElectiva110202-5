@@ -22,7 +22,7 @@ const RegistrarMedico = () => {
     setError('');
 
     try {
-        const res = await axios.post('http://127.0.0.1:8000/registrar_medico/', formulario);
+        const res = await axios.post('http://127.0.0.1:8000/registrar-medico/', formulario);
         setMensaje(res.data.mensaje);
     } catch (err) {
         console.log(err.response);
