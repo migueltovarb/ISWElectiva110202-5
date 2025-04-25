@@ -32,7 +32,7 @@ const CrearUsuario = () => {
     setLoading(true);
     try {
         const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/registro-paciente/`,
+        `${import.meta.env.VITE_API_URL} http://127.0.0.1:8000/api/registro-paciente/`,
         formData
         );
         setMensaje(response.data.mensaje || "Registro exitoso.");
