@@ -18,16 +18,18 @@ from django.contrib.auth.forms import SetPasswordForm
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
 from AppCitasMedicas.models import Medico
-from rest_framework.authtoken.models import Token
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
 from .serializers import RegistroPacienteSerializer
 from .serializers import RegistroMedicoSerializer
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.authtoken.models import Token
+from rest_framework import status
+from django.contrib.auth import authenticate
+from .models import Paciente
+from .serializers import PacienteSerializer, UsuarioSerializer
 
 @csrf_exempt
 def registro_paciente(request):
@@ -173,34 +175,33 @@ class LoginMedicoView(APIView):
         else:
             return Response({'error': 'Correo o contraseña incorrectos'}, status=status.HTTP_401_UNAUTHORIZED)
 
-@csrf_exempt
-def login_paciente(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-        except json.JSONDecodeError:
-            return JsonResponse({'error': 'Formato JSON inválido'}, status=400)
-
-        email = data.get('email')
-        password = data.get('password')
+class LoginPacienteView(APIView):
+    def post(self, request):
+        email = request.data.get('email')
+        password = request.data.get('password')
 
         if not email or not password:
-            return JsonResponse({'error': 'Email y contraseña son obligatorios'}, status=400)
+            return Response({'error': 'Email y contraseña son obligatorios'}, status=status.HTTP_400_BAD_REQUEST)
 
-        try:
-            user = User.objects.get(email=email)
-        except User.DoesNotExist:
-            return JsonResponse({'error': 'Usuario no encontrado'}, status=404)
-
-        if not user.check_password(password):
-            return JsonResponse({'error': 'Contraseña incorrecta'}, status=400)
+        user = authenticate(username=email, password=password)
+        if user is None:
+            return Response({'error': 'Credenciales inválidas'}, status=status.HTTP_401_UNAUTHORIZED)
 
         if not user.is_active:
-            return JsonResponse({'error': 'La cuenta no está activada. Revisa tu correo.'}, status=403)
+            return Response({'error': 'Cuenta no activada. Revisa tu correo.'}, status=status.HTTP_403_FORBIDDEN)
 
-        return JsonResponse({'mensaje': 'Inicio de sesión exitoso'}, status=200)
+        try:
+            paciente = Paciente.objects.get(user=user)
+        except Paciente.DoesNotExist:
+            return Response({'error': 'No existe paciente asociado a este usuario'}, status=status.HTTP_404_NOT_FOUND)
 
-    return JsonResponse({'error': 'Método no permitido'}, status=405)
+        token, created = Token.objects.get_or_create(user=user)
+
+        return Response({
+            'token': token.key,
+            'usuario': UsuarioSerializer(user).data,
+            'paciente': PacienteSerializer(paciente).data,
+        })
 
 @method_decorator(csrf_exempt, name='dispatch')
 class CustomPasswordResetConfirmView(PasswordResetConfirmView):

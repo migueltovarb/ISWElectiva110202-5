@@ -5,27 +5,24 @@ from .models import Medico
 from django.contrib.auth.models import User
 from rest_framework.validators import UniqueValidator
 
-class UserSerializer(serializers.ModelSerializer):
+class UsuarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'first_name', 'last_name']
+        fields = ['id', 'first_name', 'last_name', 'email']
 
 class PacienteSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
-
     class Meta:
         model = Paciente
-        fields = ['id', 'user', 'telefono']
+        fields = ['id', 'telefono']
 
 class MedicoSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
+    user = UsuarioSerializer()
 
     class Meta:
         model = Medico
         fields = ['id', 'user', 'especialidad', 'cedula_profesional', 'telefono', 'horario_disponible']
 
 
-# Registro de Paciente
 class RegistroPacienteSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
         required=True,
@@ -44,7 +41,6 @@ class RegistroPacienteSerializer(serializers.ModelSerializer):
         Paciente.objects.create(user=user, telefono=telefono)
         return user
 
-# Registro de Médico
 class RegistroMedicoSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
         required=True,
