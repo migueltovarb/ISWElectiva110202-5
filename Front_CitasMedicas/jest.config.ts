@@ -1,35 +1,19 @@
-module.exports = {
+import type { Config } from 'jest';
+
+const config: Config = {
+    preset: 'ts-jest',
     testEnvironment: 'jsdom',
-    setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
-    moduleNameMapper: {
-        '^@/(.*)$': '<rootDir>/src/$1',
-        '\\.(css|less|sass|scss)$': 'identity-obj-proxy',
-    },
+    setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
+    moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
     transform: {
-        '^.+\\.(js|jsx|ts|tsx)$': ['esbuild-jest', { 
-        sourcemap: true,
-        loaders: {
-            '.js': 'jsx',
-            '.ts': 'tsx'
-        }
-        }]
+    '^.+\\.(ts|tsx)$': 'ts-jest',
     },
-    testPathIgnorePatterns: ['/node_modules/'],
-    };
+};
+
+export default config;
 
     module.exports = {
-        testEnvironment: 'jsdom',
-        setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
-        transform: {
-            '^.+\\.(js|jsx|ts|tsx)$': ['esbuild-jest', {
-            sourcemap: true,
-            loaders: {
-                '.js': 'jsx',
-                '.ts': 'tsx'
-            }
-            }]
-        },
-        moduleNameMapper: {
-            '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
-        },
+        preset: "ts-jest",
+        testEnvironment: "jsdom",
+        setupFilesAfterEnv: ["<rootDir>/src/setupTests.ts"],
         };
