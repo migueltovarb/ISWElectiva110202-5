@@ -77,8 +77,12 @@ WSGI_APPLICATION = 'GestionCitasMedicas.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'gestion_citas',     # el nombre que pusiste en pgAdmin
+        'USER': 'postgres',           # tu usuario de PostgreSQL
+        'PASSWORD': 'Jayerds1030000',  # tu contraseña
+        'HOST': 'localhost',
+        'PORT': '5432',               # normalmente el puerto es 5432
     }
 }
 
