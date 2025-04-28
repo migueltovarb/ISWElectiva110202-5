@@ -27,8 +27,6 @@ from .models import Paciente
 from .serializers import PacienteSerializer, UsuarioSerializer
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAdminUser
-from .models import Paciente
-from .serializers import PacienteSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import Paciente
@@ -228,9 +226,6 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
 
     def form_invalid(self, form):
         return JsonResponse({'error': 'La contraseña no cumple los requisitos.'}, status=400)
-
-
-
 
 class ListaPacientesView(APIView):
     def get(self, request):

@@ -16,7 +16,6 @@ class Medico(models.Model):
     especialidad = models.CharField(max_length=100)
     cedula_profesional = models.CharField(max_length=20, unique=True)
     telefono = models.CharField(max_length=15)
-    horario_disponible = models.TextField(blank=True)
 
     def __str__(self):
         return f'{self.user.first_name} - {self.especialidad}'

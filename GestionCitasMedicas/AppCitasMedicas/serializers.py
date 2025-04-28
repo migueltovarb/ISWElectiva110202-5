@@ -22,7 +22,6 @@ class MedicoSerializer(serializers.ModelSerializer):
         model = Medico
         fields = ['id', 'user', 'especialidad', 'cedula_profesional', 'telefono', 'horario_disponible']
 
-
 class RegistroPacienteSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
         required=True,
