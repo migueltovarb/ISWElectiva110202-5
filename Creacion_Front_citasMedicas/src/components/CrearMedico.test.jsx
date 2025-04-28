@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import axios from "axios";
 import { vi } from "vitest";
 import CrearMedico from "./CrearMedico";
@@ -10,8 +10,10 @@ beforeEach(() => {
     vi.clearAllMocks();
 });
 
-test("renders the form with all fields and submit button", () => {
+test("renders the form with all fields and submit button", async () => {
     render(<CrearMedico />);
+
+    await waitFor(() => screen.getByPlaceholderText('Nombre'));
 
     expect(screen.getByPlaceholderText("nombre")).toBeInTheDocument();
     expect(screen.getByPlaceholderText("especialidad")).toBeInTheDocument();
