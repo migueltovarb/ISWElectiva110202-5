@@ -8,6 +8,10 @@ from .password_reset_views import CustomPasswordResetView, CustomPasswordResetCo
 from .views import LoginMedicoView
 from .views import LoginPacienteView
 from .views import ListaPacientesView
+from .views import MedicosPorEspecialidad
+from .views import AgendarCitaView
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+
 
 urlpatterns = [
     path('registro-paciente/', views.registro_paciente, name='registro_paciente'),
@@ -20,6 +24,10 @@ urlpatterns = [
     path('reset/done/', CustomPasswordResetCompleteView.as_view(), name='password_reset_complete'),
     path('medico/login/', LoginMedicoView.as_view(), name='login-medico'),
     path('api/lista-pacientes/', ListaPacientesView.as_view(), name='lista-pacientes'),
-
+    path('especialidades/', views.listar_especialidades, name='listar_especialidades'),
+    path('medicos/', MedicosPorEspecialidad.as_view(), name='medicos_por_especialidad'),
+    path('agendar_cita/', AgendarCitaView.as_view(), name='agendar_cita'),
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
 ]

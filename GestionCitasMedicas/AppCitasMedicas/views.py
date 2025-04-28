@@ -27,10 +27,13 @@ from .models import Paciente
 from .serializers import PacienteSerializer, UsuarioSerializer
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAdminUser
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from .models import Paciente
-from .serializers import PacienteSerializer
+from rest_framework.decorators import api_view
+from .models import Especialidad
+from .models import Medico
+from .serializers import MedicoSerializer
+from .models import Cita
+from rest_framework.permissions import IsAuthenticated
+
 
 @csrf_exempt
 def registro_paciente(request):
@@ -234,4 +237,55 @@ class ListaPacientesView(APIView):
         serializer = PacienteSerializer(pacientes, many=True)
         return Response(serializer.data)
 
+@api_view(['GET'])
+def listar_especialidades(request):
+    especialidades = Especialidad.objects.all()
+    data = [{'id': esp.id, 'nombre': esp.nombre} for esp in especialidades]
+    return Response(data)
 
+class MedicosPorEspecialidad(APIView):
+    def get(self, request, *args, **kwargs):
+        especialidad_id = request.query_params.get('especialidad', None)
+        
+        if especialidad_id is not None:
+            try:
+                especialidad = Especialidad.objects.get(id=especialidad_id)
+                medicos = Medico.objects.filter(especialidad=especialidad)
+                serializer = MedicoSerializer(medicos, many=True)
+                return Response(serializer.data)
+            except Especialidad.DoesNotExist:
+                return Response({"error": "Especialidad no encontrada"}, status=status.HTTP_404_NOT_FOUND)
+        
+        medicos = Medico.objects.all()
+        serializer = MedicoSerializer(medicos, many=True)
+        return Response(serializer.data)
+
+
+class AgendarCitaView(APIView):
+    permission_classes = [IsAuthenticated]  
+
+    def post(self, request):
+        paciente = request.user 
+        medico_id = request.data.get('medico')
+        fecha = request.data.get('fecha')
+        hora = request.data.get('hora')
+
+        try:
+            medico = Medico.objects.get(id=medico_id)
+        except Medico.DoesNotExist:
+            return Response({"error": "Médico no encontrado"}, status=status.HTTP_400_BAD_REQUEST)
+
+        
+        cita = Cita(paciente=paciente, medico=medico, fecha=fecha, hora=hora)
+
+        try:
+            cita.full_clean()  
+        except ValidationError as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+        cita.save()
+
+        mensaje = f"Hola {paciente.first_name},\n\nTu cita con el Dr. {medico.user.first_name} {medico.user.last_name} ha sido confirmada para el {fecha} a las {hora}."
+        send_mail('Confirmación de cita médica', mensaje, settings.DEFAULT_FROM_EMAIL, [paciente.email])
+
+        return Response({"mensaje": "Cita agendada con éxito"}, status=status.HTTP_201_CREATED)

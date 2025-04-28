@@ -1,9 +1,10 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from .models import Paciente
-from .models import Medico
+from .models import Medico, Especialidad
 from django.contrib.auth.models import User
 from rest_framework.validators import UniqueValidator
+from .models import Cita
 
 class UsuarioSerializer(serializers.ModelSerializer):
     class Meta:
@@ -67,3 +68,19 @@ class RegistroMedicoSerializer(serializers.ModelSerializer):
             cedula_profesional=cedula_profesional
         )
         return user       
+
+class MedicoSerializer(serializers.ModelSerializer):
+    especialidad = serializers.CharField(source='especialidad.nombre') 
+
+    class Meta:
+        model = Medico
+        fields = ['id', 'user', 'especialidad', 'telefono']
+
+
+class CitaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cita
+        fields = ['medico', 'fecha', 'hora']
+
+    def validate(self, data):
+        return data

@@ -38,10 +38,17 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework_simplejwt',
     'rest_framework.authtoken',
     'AppCitasMedicas',
     'corsheaders',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -82,11 +89,11 @@ WSGI_APPLICATION = 'GestionCitasMedicas.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'gestion_citas',     # el nombre que pusiste en pgAdmin
-        'USER': 'postgres',           # tu usuario de PostgreSQL
-        'PASSWORD': 'Jayerds1030000',  # tu contraseña
+        'NAME': 'gestion_citas',     
+        'USER': 'postgres',           
+        'PASSWORD': 'Jayerds1030000',  
         'HOST': 'localhost',
-        'PORT': '5432',               # normalmente el puerto es 5432
+        'PORT': '5432',               
     }
 }
 
