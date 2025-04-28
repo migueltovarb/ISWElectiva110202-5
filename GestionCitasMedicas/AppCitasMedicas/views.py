@@ -145,15 +145,6 @@ def registrar_medico(request):
     
     return JsonResponse({'error': 'Método no permitido'}, status=405)
 
-class RegistroMedicoView(APIView):
-    def post(self, request):
-        serializer = RegistroMedicoSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"mensaje": "Médico registrado correctamente"}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
 class LoginMedicoView(APIView):
     def post(self, request):
         email = request.data.get('email')

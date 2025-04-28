@@ -69,13 +69,6 @@ class RegistroMedicoSerializer(serializers.ModelSerializer):
         )
         return user       
 
-class MedicoSerializer(serializers.ModelSerializer):
-    especialidad = serializers.CharField(source='especialidad.nombre') 
-
-    class Meta:
-        model = Medico
-        fields = ['id', 'user', 'especialidad', 'telefono']
-
 
 class CitaSerializer(serializers.ModelSerializer):
     class Meta:
