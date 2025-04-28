@@ -1,5 +1,8 @@
-import RegistrarPaciente from './components/CrearUsuario';
+import AgendarCita from './components/AgendarCita';
 import RegistrarMedico from './components/CrearMedico';
+import RegistrarPaciente from './components/CrearUsuario';
+import Login from './components/Login';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
@@ -10,6 +13,24 @@ function App() {
     </div>
   );
 }
+
+const App = () => {
+  const [authToken, setAuthToken] = useState(localStorage.getItem('auth_token'));
+
+  return (
+    <Router>
+      <Routes>
+        <Route path="/login" element={<Login setAuthToken={setAuthToken} />} />
+        <Route path="/crear-medico" element={<CrearMedicos />} />
+        <Route
+          path="/agendar-cita"
+          element={<ProtectedRoute authToken={authToken} component={<AgendarCita />} />}
+        />
+        {/* Puedes agregar más rutas protegidas o públicas */}
+      </Routes>
+    </Router>
+  );
+};
 
 export default App;
 
