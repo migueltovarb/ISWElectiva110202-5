@@ -6,74 +6,135 @@ import CrearMedico from "./CrearMedico";
 vi.mock("axios");
 
 describe("CrearMedico Component", () => {
-beforeEach(() => {
-    vi.clearAllMocks();
-});
-
-test("renders the form with all fields and submit button", async () => {
-    render(<CrearMedico />);
-
-    await waitFor(() => screen.getByPlaceholderText('Nombre'));
-
-    expect(screen.getByPlaceholderText("nombre")).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("especialidad")).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("cedula")).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("email")).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("telefono")).toBeInTheDocument();
-    expect(screen.getByText("Registrarme")).toBeInTheDocument();
-});
-
-test("shows error if terms are not accepted", async () => {
-    render(<CrearMedico />);
-
-    fireEvent.change(screen.getByPlaceholderText("nombre"), {
-    target: { value: "andres tapia" },
+    beforeEach(() => {
+        vi.clearAllMocks();
     });
-    fireEvent.change(screen.getByPlaceholderText("especialidad"), {
-    target: { value: "oftalmologo" },
+
+    test("renders the form with all fields and submit button", () => {
+        render(<CrearMedico />);
+
+        expect(screen.getByPlaceholderText("Nombre")).toBeInTheDocument();
+        expect(screen.getByPlaceholderText("Especialidad")).toBeInTheDocument();
+        expect(screen.getByPlaceholderText("Cédula Profesional")).toBeInTheDocument();
+        expect(screen.getByPlaceholderText("Correo")).toBeInTheDocument();
+        expect(screen.getByPlaceholderText("Teléfono")).toBeInTheDocument();
+        expect(screen.getByText("Registrar")).toBeInTheDocument();
     });
-    fireEvent.change(screen.getByPlaceholderText("cedula"), {
-    target: { value: "123456789" },
-    });
-    fireEvent.change(screen.getByPlaceholderText("email"), {
-    target: { value: "andres.tapia@medico.com" },
-    });
-    fireEvent.change(screen.getByPlaceholderText("telefono"), {
-        target: { value: "3216549871" },
+
+    test("shows error if terms are not accepted", async () => {
+        render(<CrearMedico />);
+
+        fireEvent.change(screen.getByPlaceholderText("Nombre"), {
+            target: { value: "Andres Tapia" },
+        });
+        fireEvent.change(screen.getByPlaceholderText("Especialidad"), {
+            target: { value: "Oftalmólogo" },
+        });
+        fireEvent.change(screen.getByPlaceholderText("Cédula Profesional"), {
+            target: { value: "123456789" },
+        });
+        fireEvent.change(screen.getByPlaceholderText("Correo"), {
+            target: { value: "andres.tapia@medico.com" },
+        });
+        fireEvent.change(screen.getByPlaceholderText("Teléfono"), {
+            target: { value: "3216549871" },
         });
 
-    fireEvent.click(screen.getByText("Registrarme"));
+        fireEvent.click(screen.getByText("Registrar"));
 
-    expect(
-    await screen.findByText("Debes aceptar los términos y condiciones.")
-    ).toBeInTheDocument();
-});
-
-test("submits the form successfully", async () => {
-    axios.post.mockResolvedValueOnce({
-        data: { mensaje: "Registro exitoso." },
+        await waitFor(() => {
+            expect(screen.getByText("Debes aceptar los términos y condiciones.")).toBeInTheDocument();
+        });
     });
 
-    render(<CrearMedico />);
+    test("submits the form successfully", async () => {
+        axios.post.mockResolvedValueOnce({
+            data: { mensaje: "Registro exitoso." },
+        });
 
-    fireEvent.change(screen.getByPlaceholderText("nombre"), {
-        target: { value: "andres tapia" },
-    });
-    fireEvent.change(screen.getByPlaceholderText("especialidad"), {
-        target: { value: "Oftalmologo" },
-    });
-    fireEvent.change(screen.getByPlaceholderText("cedula"), {
-        target: { value: "123456789" },
-    });
-        fireEvent.change(screen.getByPlaceholderText("email"), {
-        target: { value: "andres.tapia@medico.com" },
-    });
-        fireEvent.change(screen.getByPlaceholderText("telefono"), {
-        target: { value: "3216549871" },
-    });
-        fireEvent.click(screen.getByRole("checkbox"));
-        fireEvent.click(screen.getByText("Registrarme"));
+        render(<CrearMedico />);
 
-    expect(await screen.findByText("Registro exitoso.")).toBeInTheDocument();
+        fireEvent.change(screen.getByPlaceholderText("Nombre"), {
+            target: { value: "Andres Tapia" },
+        });
+        fireEvent.change(screen.getByPlaceholderText("Especialidad"), {
+            target: { value: "Oftalmólogo" },
+        });
+        fireEvent.change(screen.getByPlaceholderText("Cédula Profesional"), {
+            target: { value: "123456789" },
+        });
+        fireEvent.change(screen.getByPlaceholderText("Correo"), {
+            target: { value: "andres.tapia@medico.com" },
+        });
+        fireEvent.change(screen.getByPlaceholderText("Teléfono"), {
+            target: { value: "3216549871" },
+        });
+
+        fireEvent.click(screen.getByLabelText("Acepto los términos y condiciones"));
+        fireEvent.click(screen.getByText("Registrar"));
+
+        await waitFor(() => {
+            expect(screen.getByText("Registro exitoso.")).toBeInTheDocument();
+        });
+    });
+
+    test("shows error if API call fails", async () => {
+        axios.post.mockRejectedValueOnce({
+            response: {
+                data: {
+                    error: "Error al registrar médico."
+                }
+            }
+        });
+
+        render(<CrearMedico />);
+
+        fireEvent.change(screen.getByPlaceholderText("Nombre"), {
+            target: { value: "Andres Tapia" },
+        });
+        fireEvent.change(screen.getByPlaceholderText("Especialidad"), {
+            target: { value: "Oftalmólogo" },
+        });
+        fireEvent.change(screen.getByPlaceholderText("Cédula Profesional"), {
+            target: { value: "123456789" },
+        });
+        fireEvent.change(screen.getByPlaceholderText("Correo"), {
+            target: { value: "andres.tapia@medico.com" },
+        });
+        fireEvent.change(screen.getByPlaceholderText("Teléfono"), {
+            target: { value: "3216549871" },
+        });
+
+        fireEvent.click(screen.getByLabelText("Acepto los términos y condiciones"));
+        fireEvent.click(screen.getByText("Registrar"));
+
+        await waitFor(() => {
+            expect(screen.getByText("Error al registrar médico.")).toBeInTheDocument();
+        });
+    });
+
+    test("shows validation error for empty fields", async () => {
+        render(<CrearMedico />);
+
+        fireEvent.click(screen.getByText("Registrar"));
+
+        await waitFor(() => {
+            // Aseguramos que se muestre el mensaje de error por campos vacíos
+            expect(screen.getByText("Todos los campos son obligatorios.")).toBeInTheDocument();
+        });
+    });
+
+    test("does not call API if form is invalid", async () => {
+        render(<CrearMedico />);
+
+        fireEvent.change(screen.getByPlaceholderText("Nombre"), {
+            target: { value: "" },
+        });
+
+        fireEvent.click(screen.getByText("Registrar"));
+
+        await waitFor(() => {
+            expect(axios.post).not.toHaveBeenCalled();
+        });
     });
 });
