@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 
-const AgendarCita = () => {
+const AgendarCita = ({ apiUrl = 'http://127.0.0.1:8000/api' }) => {
     const [especialidades, setEspecialidades] = useState([]);
     const [medicos, setMedicos] = useState([]);
     const [selectedEspecialidad, setSelectedEspecialidad] = useState('');
@@ -10,27 +10,54 @@ const AgendarCita = () => {
     const [hora, setHora] = useState('');
     const [error, setError] = useState('');
     const [mensaje, setMensaje] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        axios.get('http://127.0.0.1:8000/api/especialidades/')
-            .then((response) => setEspecialidades(response.data))
-            .catch(() => setError('Error al cargar las especialidades'));
-    }, []);
+        const fetchEspecialidades = async () => {
+            try {
+                setIsLoading(true);
+                const response = await axios.get(`${apiUrl}/especialidades/`);
+                setEspecialidades(response.data);
+            } catch (err) {
+                setError('Error al cargar las especialidades');
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchEspecialidades();
+    }, [apiUrl]);
 
     useEffect(() => {
-        if (selectedEspecialidad) {
-            axios.get(`http://127.0.0.1:8000/api/medicos/?especialidad=${selectedEspecialidad}`)
-                .then((response) => setMedicos(response.data))
-                .catch(() => setError('Error al cargar los médicos'));
-        }
-    }, [selectedEspecialidad]);
+        const fetchMedicos = async () => {
+            if (selectedEspecialidad) {
+                try {
+                    setIsLoading(true);
+                    const response = await axios.get(
+                        `${apiUrl}/medicos/?especialidad=${selectedEspecialidad}`
+                    );
+                    setMedicos(response.data);
+                    setSelectedMedico('');
+                } catch (err) {
+                    setError('Error al cargar los médicos');
+                } finally {
+                    setIsLoading(false);
+                }
+            }
+        };
+
+        fetchMedicos();
+    }, [selectedEspecialidad, apiUrl]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError(''); // Limpiar errores previos
+        setIsLoading(true);
 
         const token = localStorage.getItem('auth_token');
         if (!token) {
             setError('Debes iniciar sesión para agendar una cita');
+            setIsLoading(false);
             return;
         }
 
@@ -42,7 +69,7 @@ const AgendarCita = () => {
 
         try {
             const response = await axios.post(
-                'http://127.0.0.1:8000/api/agendar_cita/',
+                `${apiUrl}/agendar_cita/`,
                 citaData,
                 {
                     headers: { Authorization: `Bearer ${token}` },
@@ -50,8 +77,13 @@ const AgendarCita = () => {
             );
             setMensaje(response.data.mensaje);
             setError('');
-        } catch {
-            setError('Error al agendar la cita');
+            setSelectedMedico('');
+            setFecha('');
+            setHora('');
+        } catch (err) {
+            setError(err.response?.data?.message || 'Error al agendar la cita');
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -69,6 +101,7 @@ const AgendarCita = () => {
                         onChange={(e) => setSelectedEspecialidad(e.target.value)}
                         required
                         className="w-full border border-gray-300 rounded-lg p-2"
+                        disabled={isLoading}
                     >
                         <option value="">Seleccione una especialidad</option>
                         {especialidades.map((especialidad) => (
@@ -86,11 +119,12 @@ const AgendarCita = () => {
                         onChange={(e) => setSelectedMedico(e.target.value)}
                         required
                         className="w-full border border-gray-300 rounded-lg p-2"
+                        disabled={!selectedEspecialidad || isLoading}
                     >
                         <option value="">Seleccione un médico</option>
                         {medicos.map((medico) => (
                             <option key={medico.id} value={medico.id}>
-                                {medico.user.first_name} {medico.user.last_name}
+                                {medico.user?.first_name} {medico.user?.last_name}
                             </option>
                         ))}
                     </select>
@@ -104,6 +138,7 @@ const AgendarCita = () => {
                         onChange={(e) => setFecha(e.target.value)}
                         required
                         className="w-full border border-gray-300 rounded-lg p-2"
+                        disabled={isLoading}
                     />
                 </div>
 
@@ -115,19 +150,21 @@ const AgendarCita = () => {
                         onChange={(e) => setHora(e.target.value)}
                         required
                         className="w-full border border-gray-300 rounded-lg p-2"
+                        disabled={isLoading}
                     />
                 </div>
 
                 <button
                     type="submit"
-                    className="w-full bg-blue-600 text-white font-medium py-2 rounded-lg hover:bg-blue-700 transition"
+                    className="w-full bg-blue-600 text-white font-medium py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
+                    disabled={isLoading}
                 >
-                    Confirm
+                    {isLoading ? 'Processing...' : 'Confirm'}
                 </button>
             </form>
 
-            {mensaje && <p className="text-green-600 mt-4">{mensaje}</p>}
-            {error && <p className="text-red-600 mt-4">{error}</p>}
+            {mensaje && <p role="alert" className="text-green-600 mt-4">{mensaje}</p>}
+            {error && <p role="alert" className="text-red-600 mt-4">{error}</p>}
         </div>
     );
 };
