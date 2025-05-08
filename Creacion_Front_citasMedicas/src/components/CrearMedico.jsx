@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import axios from "axios";
-import "./CrearMedico.css"; // Archivo CSS para estilos personalizados
 
 const CrearMedico = () => {
     const [nombre, setNombre] = useState("");
@@ -33,56 +32,48 @@ const CrearMedico = () => {
     };
 
     return (
-        <div className="form-container">
-            <h2>Registrar Médico</h2>
-            <form onSubmit={handleSubmit} className="form">
+        <form onSubmit={handleSubmit}>
+            <input
+                type="text"
+                placeholder="Nombre"
+                value={nombre}
+                onChange={(e) => setNombre(e.target.value)}
+            />
+            <input
+                type="text"
+                placeholder="Especialidad"
+                value={especialidad}
+                onChange={(e) => setEspecialidad(e.target.value)}
+            />
+            <input
+                type="text"
+                placeholder="Cédula Profesional"
+                value={cedula}
+                onChange={(e) => setCedula(e.target.value)}
+            />
+            <input
+                type="email"
+                placeholder="Correo"
+                value={correo}
+                onChange={(e) => setCorreo(e.target.value)}
+            />
+            <input
+                type="tel"
+                placeholder="Teléfono"
+                value={telefono}
+                onChange={(e) => setTelefono(e.target.value)}
+            />
+            <label>
                 <input
-                    type="text"
-                    placeholder="Nombre"
-                    value={nombre}
-                    onChange={(e) => setNombre(e.target.value)}
-                    className="form-input"
+                    type="checkbox"
+                    checked={termsAccepted}
+                    onChange={() => setTermsAccepted(!termsAccepted)}
                 />
-                <input
-                    type="text"
-                    placeholder="Especialidad"
-                    value={especialidad}
-                    onChange={(e) => setEspecialidad(e.target.value)}
-                    className="form-input"
-                />
-                <input
-                    type="text"
-                    placeholder="Cédula Profesional"
-                    value={cedula}
-                    onChange={(e) => setCedula(e.target.value)}
-                    className="form-input"
-                />
-                <input
-                    type="email"
-                    placeholder="Correo"
-                    value={correo}
-                    onChange={(e) => setCorreo(e.target.value)}
-                    className="form-input"
-                />
-                <input
-                    type="tel"
-                    placeholder="Teléfono"
-                    value={telefono}
-                    onChange={(e) => setTelefono(e.target.value)}
-                    className="form-input"
-                />
-                <label className="form-checkbox">
-                    <input
-                        type="checkbox"
-                        checked={termsAccepted}
-                        onChange={() => setTermsAccepted(!termsAccepted)}
-                    />
-                    Acepto los términos y condiciones
-                </label>
-                {error && <p className="form-error">{error}</p>}
-                <button type="submit" className="form-button">Registrar</button>
-            </form>
-        </div>
+                Acepto los términos y condiciones
+            </label>
+            {error && <p>{error}</p>}
+            <button type="submit">Registrar</button>
+        </form>
     );
 };
 
