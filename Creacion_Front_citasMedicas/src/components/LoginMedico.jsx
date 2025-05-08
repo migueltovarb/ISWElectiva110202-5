@@ -1,74 +1,58 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import axios from 'axios';
+import { useState } from 'react';
 
-export default function LoginMedico() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const navigate = useNavigate();
+const LoginMedico = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [mensaje, setMensaje] = useState('');
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await fetch("medico/login/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}medico/login/`, {
+        email,
+        password,
       });
 
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || "Error al iniciar sesión");
-      }
-      const data = await response.json();
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("medico", JSON.stringify(data.medico));
-      navigate("/dashboard-medico");
-    } catch (err) {
-      setError(err.message);
+      const { token, medico } = response.data;
+
+      localStorage.setItem('token', token);
+
+      setMensaje('Login exitoso');
+      console.log(medico);
+
+    } catch (error) {
+      console.error(error);
+      setMensaje('Correo o contraseña incorrectos');
     }
   };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-      <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-lg">
-        <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Iniciar sesión - Médico</h2>
-        {error && <div className="text-red-600 text-sm mb-4 text-center">{error}</div>}
-        <form onSubmit={handleLogin} className="space-y-4">
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-600">Correo electrónico</label>
-            <input
-              type="email"
-              id="email"
-              className="w-full px-4 py-2 border rounded-xl shadow-sm focus:outline-none focus:ring focus:border-blue-300"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-600">Contraseña</label>
-            <input
-              type="password"
-              id="password"
-              className="w-full px-4 py-2 border rounded-xl shadow-sm focus:outline-none focus:ring focus:border-blue-300"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow transition duration-200"
-          >
-            Iniciar sesión
-          </button>
-        </form>
-      </div>
+    <div className="max-w-md mx-auto mt-20 p-6 border rounded-xl shadow-md">
+      <h2 className="text-2xl font-bold mb-4 text-center">Login Médico</h2>
+      <form onSubmit={handleLogin} className="space-y-4">
+        <input
+          type="email"
+          placeholder="Correo"
+          className="w-full p-2 border rounded"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <input
+          type="password"
+          placeholder="Contraseña"
+          className="w-full p-2 border rounded"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <button type="submit" className="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600">
+          Iniciar sesión
+        </button>
+      </form>
+      {mensaje && <p className="mt-4 text-center text-red-500">{mensaje}</p>}
     </div>
   );
-}
+};
+
+export default LoginMedico;
