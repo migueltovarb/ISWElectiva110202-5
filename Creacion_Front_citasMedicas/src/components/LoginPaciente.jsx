@@ -9,7 +9,6 @@ export default function LoginPaciente() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError("");
     try {
         const response = await fetch("api/login-paciente/", {
           method: "POST",
