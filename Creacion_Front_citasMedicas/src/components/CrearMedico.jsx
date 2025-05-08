@@ -33,7 +33,7 @@ const CrearMedico = () => {
     setLoading(true);
     try {
         const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}api/registro-Medico/`,
+        `${import.meta.env.VITE_API_URL}registro-Medico/`,
         formData
         );
         setMensaje(response.data.mensaje || "Registro exitoso.");
