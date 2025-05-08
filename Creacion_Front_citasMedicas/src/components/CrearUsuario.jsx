@@ -32,7 +32,7 @@ const CrearUsuario = () => {
     setLoading(true);
     try {
         const response = await axios.post(
-        `${import.meta.env.VITE_API_URL} http://127.0.0.1:8000/api/registro-paciente/`,
+        `${import.meta.env.VITE_API_URL}registro-paciente/`,
         formData
         );
         setMensaje(response.data.mensaje || "Registro exitoso.");
@@ -55,9 +55,9 @@ const CrearUsuario = () => {
     };
 
     return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-white shadow-lg rounded-xl">
+    <div className="max-w-md mx-auto mt-10 p-6 bg-gray-950 shadow-lg rounded-xl">
         <h2 className="text-2xl font-bold text-center text-indigo-600 mb-2">🩺 Registro de Pacientes</h2>
-        <p className="text-center text-gray-500 mb-4">Completa el formulario para crear tu cuenta</p>
+        <p className="text-center text-white mb-4">Completa el formulario para crear tu cuenta</p>
 
         {mensaje && <p className="text-green-600 text-center mb-4">{mensaje}</p>}
         {error && <p className="text-red-600 text-center mb-4">{error}</p>}
@@ -117,17 +117,10 @@ const CrearUsuario = () => {
         <button
             type="submit"
             disabled={loading}
-            className="w-full bg-indigo-500 hover:bg-indigo-600 text-white py-2 rounded-xl font-semibold transition"
+            className="w-full bg-cyan-800 hover:bg-indigo-600 text-white py-2 rounded-xl font-semibold transition"
         >
             {loading ? "Registrando..." : "Registrarme"}
         </button>
-
-        <p className="text-center text-sm mt-4">
-            ¿Ya tienes cuenta?{" "}
-            <a href="#" className="text-indigo-500 font-medium">
-            Inicia sesión
-            </a>
-        </p>
         </form>
     </div>
     );

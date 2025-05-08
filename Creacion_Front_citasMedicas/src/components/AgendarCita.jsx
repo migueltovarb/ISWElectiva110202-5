@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 
-const AgendarCita = ({ apiUrl = 'http://127.0.0.1:8000/api' }) => {
+const AgendarCita = ({ apiUrl = 'http://127.0.0.1:8000/api/' }) => {
     const [especialidades, setEspecialidades] = useState([]);
     const [medicos, setMedicos] = useState([]);
     const [selectedEspecialidad, setSelectedEspecialidad] = useState('');
@@ -88,8 +88,8 @@ const AgendarCita = ({ apiUrl = 'http://127.0.0.1:8000/api' }) => {
     };
 
     return (
-        <div className="flex flex-col items-center bg-gray-50 min-h-screen py-10">
-            <h1 className="text-3xl font-bold mb-6 text-gray-800">Request an Appointment</h1>
+        <div className="flex flex-col items-center bg-gray-50 min-h-6 py-10">
+            <h1 className="text-2xl font-bold text-center text-indigo-600 mb-2">Request an Appointment</h1>
             <form
                 onSubmit={handleSubmit}
                 className="bg-white shadow-md rounded-lg p-8 w-full max-w-md"
@@ -156,7 +156,7 @@ const AgendarCita = ({ apiUrl = 'http://127.0.0.1:8000/api' }) => {
 
                 <button
                     type="submit"
-                    className="w-full bg-blue-600 text-white font-medium py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
+                    className="w-full bg-cyan-800 text-white font-medium py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
                     disabled={isLoading}
                 >
                     {isLoading ? 'Processing...' : 'Confirm'}

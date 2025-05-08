@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import "./CrearMedico.css"; // Archivo CSS para estilos personalizados
+ // Archivo CSS para estilos personalizados
 
 const CrearMedico = () => {
     const [nombre, setNombre] = useState("");
