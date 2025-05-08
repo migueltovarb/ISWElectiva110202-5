@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useState } from "react";
-import { FaUser } from "react-icons/fa";
+import { FaEnvelope, FaPhone, FaUser } from "react-icons/fa";
 
 const CrearMedico = () => {
     const [formData, setFormData] = useState({
@@ -66,7 +66,7 @@ const CrearMedico = () => {
             {error && <p className="text-red-600 text-center mb-4">{error}</p>}
 
             <form onSubmit={handleSubmit} className="space-y-4">
-                <inputField
+                <InputField
                     icon={<FaUser />}
                     name="Nombre"
                     type="text"
@@ -74,8 +74,7 @@ const CrearMedico = () => {
                     value={formData.Nombre}
                     onChange={handleChange}
                 />
-                <inputField
-                    icon={<FaUser />}
+                <InputField
                     name="Especialidad"
                     type="text"
                     placeholder="Especialidad"
@@ -83,24 +82,23 @@ const CrearMedico = () => {
                     onChange={handleChange}
                     
                 />
-                <inputField
-                    icon={<FaUser />}
+                <InputField
                     name="Cedula_Profesional"
                     type="text"
                     placeholder="Cédula Profesional"
                     value={formData.Cedula_Profesional}
                     onChange={handleChange}
                 />
-                <inputField
-                    icon={<FaUser />}
+                <InputField
+                    icon={<FaEnvelope />}
                     name="Correo"
                     type="correo"
                     placeholder="Correo"
                     value={formData.correo}
                     onChange={handleChange}
                 />
-                <inputField
-                    icon={<FaUser />}
+                <InputField
+                    icon={<FaPhone />}
                     name="Telefono"
                     type="telefono"
                     placeholder="Teléfono"
