@@ -1,6 +1,6 @@
-import { useState } from "react";
 import axios from "axios";
-import { FaUser, FaEnvelope, FaPhone, FaLock } from "react-icons/fa";
+import { useState } from "react";
+import { FaEnvelope, FaLock, FaPhone, FaUser } from "react-icons/fa";
 
 const CrearUsuario = () => {
     const [formData, setFormData] = useState({
@@ -32,7 +32,7 @@ const CrearUsuario = () => {
     setLoading(true);
     try {
         const response = await axios.post(
-        `${import.meta.env.VITE_API_URL} http://127.0.0.1:8000/api/registro-paciente/`,
+        `${import.meta.env.VITE_API_URL} api/registro-paciente/`,
         formData
         );
         setMensaje(response.data.mensaje || "Registro exitoso.");
