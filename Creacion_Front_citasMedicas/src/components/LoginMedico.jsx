@@ -9,7 +9,6 @@ export default function LoginMedico() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError("");
 
     try {
       const response = await fetch("medico/login/", {
