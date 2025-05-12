@@ -5,9 +5,9 @@ import { FaEnvelope, FaPhone, FaUser } from "react-icons/fa";
 const CrearMedico = () => {
     const [formData, setFormData] = useState({
     nombre: "",
-    Especialidad: "",
+    especialidad: "",
     Cedula_Profesional: "",
-    correo: "",
+    email: "",
     telefono: "",
     });
 
@@ -39,9 +39,9 @@ const CrearMedico = () => {
         setMensaje(response.data.mensaje || "Registro exitoso.");
         setFormData({
         nombre: "",
-        Especialidad: "",
-        Cedula_Profesional: "",
-        correo: "",
+        especialidad: "",
+        cedula: "",
+        email: "",
         telefono: "",
         });
         setAceptaTerminos(false);
@@ -68,14 +68,14 @@ const CrearMedico = () => {
             <form onSubmit={handleSubmit} className="space-y-4">
                 <InputField
                     icon={<FaUser />}
-                    name="Nombre"
+                    name="nombre"
                     type="text"
                     placeholder="Nombre"
                     value={formData.Nombre}
                     onChange={handleChange}
                 />
                 <InputField
-                    name="Especialidad"
+                    name="especialidad"
                     type="text"
                     placeholder="Especialidad"
                     value={formData.Especialidad}
@@ -83,7 +83,7 @@ const CrearMedico = () => {
                     
                 />
                 <InputField
-                    name="Cedula_Profesional"
+                    name="cedula"
                     type="text"
                     placeholder="Cédula Profesional"
                     value={formData.Cedula_Profesional}
@@ -99,9 +99,9 @@ const CrearMedico = () => {
                 />
                 <InputField
                     icon={<FaPhone />}
-                    name="Telefono"
+                    name="telefono"
                     type="telefono"
-                    placeholder="Teléfono"
+                    placeholder="telefono"
                     value={formData.telefono}
                     onChange={handleChange}
                 />
