@@ -92,10 +92,10 @@ const AgendarCita = ({ apiUrl = 'agendar_cita/' }) => {
             <h1 className="text-2xl font-bold text-center text-indigo-600 mb-2">Request an Appointment</h1>
             <form
                 onSubmit={handleSubmit}
-                className="bg-gray-600 shadow-md rounded-lg p-8 w-full max-w-md"
+                className="bg-gray-300 shadow-md rounded-lg p-8 w-full max-w-md"
             >
                 <div className="mb-4">
-                    <label className="block text-white font-medium mb-2">Especialidad</label>
+                    <label className="block text-gray-900 font-medium mb-2">Especialidad</label>
                     <select
                         value={selectedEspecialidad}
                         onChange={(e) => setSelectedEspecialidad(e.target.value)}
@@ -113,7 +113,7 @@ const AgendarCita = ({ apiUrl = 'agendar_cita/' }) => {
                 </div>
 
                 <div className="mb-4">
-                    <label className="block text-white font-medium mb-2">Médico</label>
+                    <label className="block text-gray-900 font-medium mb-2">Médico</label>
                     <select
                         value={selectedMedico}
                         onChange={(e) => setSelectedMedico(e.target.value)}
@@ -131,7 +131,7 @@ const AgendarCita = ({ apiUrl = 'agendar_cita/' }) => {
                 </div>
 
                 <div className="mb-4">
-                    <label className="block text-white font-medium mb-2">Fecha</label>
+                    <label className="block text-gray-900 font-medium mb-2">Fecha</label>
                     <input
                         type="date"
                         value={fecha}
@@ -143,7 +143,7 @@ const AgendarCita = ({ apiUrl = 'agendar_cita/' }) => {
                 </div>
 
                 <div className="mb-4">
-                    <label className="block text-white font-medium mb-2">Hora</label>
+                    <label className="block text-gray-900 font-medium mb-2">Hora</label>
                     <input
                         type="time"
                         value={hora}
