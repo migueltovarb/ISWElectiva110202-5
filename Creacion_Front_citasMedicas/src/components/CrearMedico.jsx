@@ -6,7 +6,7 @@ const CrearMedico = () => {
     const [formData, setFormData] = useState({
     nombre: "",
     especialidad: "",
-    Cedula_Profesional: "",
+    cedula: "",
     email: "",
     telefono: "",
     });
