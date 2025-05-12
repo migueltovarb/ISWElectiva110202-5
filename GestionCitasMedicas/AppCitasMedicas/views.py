@@ -126,6 +126,8 @@ def registrar_medico(request):
         if Medico.objects.filter(cedula_profesional=cedula).exists():
             return JsonResponse({'error': 'La cédula profesional ya está registrada'}, status=400)
 
+        especialidad_obj, created = Especialidad.objects.get_or_create(nombre=especialidad)
+         
         password_generada = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
         user = User.objects.create_user(username=email, email=email, password=password_generada, first_name=nombre)
         user.is_active = True
