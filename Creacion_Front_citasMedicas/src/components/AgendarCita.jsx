@@ -88,14 +88,14 @@ const AgendarCita = ({ apiUrl = 'agendar_cita/' }) => {
     };
 
     return (
-        <div className="flex flex-col items-center bg-gray-50 min-h-screen py-10">
-            <h1 className="text-3xl font-bold mb-6 text-gray-800">Request an Appointment</h1>
+        <div className="fmax-w-md mx-auto mt-10 p-6 bg-gray-950 shadow-lg rounded-xl">
+            <h1 className="text-2xl font-bold text-center text-indigo-600 mb-2">Request an Appointment</h1>
             <form
                 onSubmit={handleSubmit}
-                className="bg-white shadow-md rounded-lg p-8 w-full max-w-md"
+                className="bg-gray-300 shadow-md rounded-lg p-8 w-full max-w-md"
             >
                 <div className="mb-4">
-                    <label className="block text-gray-700 font-medium mb-2">Especialidad</label>
+                    <label className="block text-gray-900 font-medium mb-2">Especialidad</label>
                     <select
                         value={selectedEspecialidad}
                         onChange={(e) => setSelectedEspecialidad(e.target.value)}
@@ -113,7 +113,7 @@ const AgendarCita = ({ apiUrl = 'agendar_cita/' }) => {
                 </div>
 
                 <div className="mb-4">
-                    <label className="block text-gray-700 font-medium mb-2">Médico</label>
+                    <label className="block text-gray-900 font-medium mb-2">Médico</label>
                     <select
                         value={selectedMedico}
                         onChange={(e) => setSelectedMedico(e.target.value)}
@@ -131,7 +131,7 @@ const AgendarCita = ({ apiUrl = 'agendar_cita/' }) => {
                 </div>
 
                 <div className="mb-4">
-                    <label className="block text-gray-700 font-medium mb-2">Fecha</label>
+                    <label className="block text-gray-900 font-medium mb-2">Fecha</label>
                     <input
                         type="date"
                         value={fecha}
@@ -143,7 +143,7 @@ const AgendarCita = ({ apiUrl = 'agendar_cita/' }) => {
                 </div>
 
                 <div className="mb-4">
-                    <label className="block text-gray-700 font-medium mb-2">Hora</label>
+                    <label className="block text-gray-900 font-medium mb-2">Hora</label>
                     <input
                         type="time"
                         value={hora}
@@ -156,7 +156,7 @@ const AgendarCita = ({ apiUrl = 'agendar_cita/' }) => {
 
                 <button
                     type="submit"
-                    className="w-full bg-blue-600 text-white font-medium py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
+                    className="w-full bg-cyan-800 text-white font-medium py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
                     disabled={isLoading}
                 >
                     {isLoading ? 'Processing...' : 'Confirm'}
