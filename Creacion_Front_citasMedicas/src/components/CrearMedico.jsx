@@ -75,6 +75,7 @@ const CrearMedico = () => {
                     onChange={handleChange}
                 />
                 <InputField
+                    icon={<FaUser />}
                     name="especialidad"
                     type="text"
                     placeholder="Especialidad"
@@ -83,6 +84,7 @@ const CrearMedico = () => {
                     
                 />
                 <InputField
+                    icon={<FaUser />}
                     name="cedula"
                     type="text"
                     placeholder="Cédula Profesional"
