@@ -5,9 +5,9 @@ import { FaEnvelope, FaPhone, FaUser } from "react-icons/fa";
 const CrearMedico = () => {
     const [formData, setFormData] = useState({
     nombre: "",
-    Especialidad: "",
+    especialidad: "",
     Cedula_Profesional: "",
-    correo: "",
+    email: "",
     telefono: "",
     });
 
@@ -39,9 +39,9 @@ const CrearMedico = () => {
         setMensaje(response.data.mensaje || "Registro exitoso.");
         setFormData({
         nombre: "",
-        Especialidad: "",
-        Cedula_Profesional: "",
-        correo: "",
+        especialidad: "",
+        cedula: "",
+        email: "",
         telefono: "",
         });
         setAceptaTerminos(false);
@@ -68,15 +68,14 @@ const CrearMedico = () => {
             <form onSubmit={handleSubmit} className="space-y-4">
                 <InputField
                     icon={<FaUser />}
-                    name="Nombre"
+                    name="nombre"
                     type="text"
                     placeholder="Nombre"
                     value={formData.Nombre}
                     onChange={handleChange}
                 />
                 <InputField
-                    icon={<FaUser />}
-                    name="Especialidad"
+                    name="especialidad"
                     type="text"
                     placeholder="Especialidad"
                     value={formData.Especialidad}
@@ -84,8 +83,7 @@ const CrearMedico = () => {
                     
                 />
                 <InputField
-                    icon={<FaUser />}
-                    name="Cedula_Profesional"
+                    name="cedula"
                     type="text"
                     placeholder="Cédula Profesional"
                     value={formData.Cedula_Profesional}
@@ -93,16 +91,16 @@ const CrearMedico = () => {
                 />
                 <InputField
                     icon={<FaEnvelope />}
-                    name="correo"
-                    type="text"
-                    placeholder="correo"
+                    name="email"
+                    type="email"
+                    placeholder="email"
                     value={formData.correo}
                     onChange={handleChange}
                 />
                 <InputField
                     icon={<FaPhone />}
                     name="telefono"
-                    type="text"
+                    type="telefono"
                     placeholder="telefono"
                     value={formData.telefono}
                     onChange={handleChange}
