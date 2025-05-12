@@ -33,7 +33,7 @@ const CrearMedico = () => {
     setLoading(true);
     try {
         const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}registro-Medico/`,
+        `${import.meta.env.VITE_API_URL}registro-medico/`,
         formData
         );
         setMensaje(response.data.mensaje || "Registro exitoso.");
@@ -75,6 +75,7 @@ const CrearMedico = () => {
                     onChange={handleChange}
                 />
                 <InputField
+                    icon={<FaUser />}
                     name="Especialidad"
                     type="text"
                     placeholder="Especialidad"
@@ -83,6 +84,7 @@ const CrearMedico = () => {
                     
                 />
                 <InputField
+                    icon={<FaUser />}
                     name="Cedula_Profesional"
                     type="text"
                     placeholder="Cédula Profesional"
@@ -91,17 +93,17 @@ const CrearMedico = () => {
                 />
                 <InputField
                     icon={<FaEnvelope />}
-                    name="Correo"
-                    type="correo"
-                    placeholder="Correo"
+                    name="correo"
+                    type="text"
+                    placeholder="correo"
                     value={formData.correo}
                     onChange={handleChange}
                 />
                 <InputField
                     icon={<FaPhone />}
-                    name="Telefono"
-                    type="telefono"
-                    placeholder="Teléfono"
+                    name="telefono"
+                    type="text"
+                    placeholder="telefono"
                     value={formData.telefono}
                     onChange={handleChange}
                 />
