@@ -1,12 +1,12 @@
-import React, { useState } from "react";
 import axios from "axios";
-import "./CrearMedico.css"; // Archivo CSS para estilos personalizados
+import { useState } from "react";
+import "./CrearMedico.css";
 
 const CrearMedico = () => {
     const [nombre, setNombre] = useState("");
     const [especialidad, setEspecialidad] = useState("");
     const [cedula, setCedula] = useState("");
-    const [correo, setCorreo] = useState("");
+    const [email, setCorreo] = useState("");
     const [telefono, setTelefono] = useState("");
     const [termsAccepted, setTermsAccepted] = useState(false);
     const [error, setError] = useState("");
@@ -14,7 +14,7 @@ const CrearMedico = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!nombre || !especialidad || !cedula || !correo || !telefono) {
+        if (!nombre || !especialidad || !cedula || !email || !telefono) {
             setError("Todos los campos son obligatorios.");
             return;
         }
@@ -25,7 +25,7 @@ const CrearMedico = () => {
         }
 
         try {
-            const response = await axios.post("/api/medicos", { nombre, especialidad, cedula, correo, telefono });
+            const response = await axios.post("/api/medicos", { nombre, especialidad, cedula, email, telefono });
             setError(response.data.mensaje);
         } catch (error) {
             setError(error.response?.data?.error || "Error al registrar médico.");
@@ -59,9 +59,9 @@ const CrearMedico = () => {
                 />
                 <input
                     type="email"
-                    placeholder="Correo"
-                    value={correo}
-                    onChange={(e) => setCorreo(e.target.value)}
+                    placeholder="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     className="form-input"
                 />
                 <input
