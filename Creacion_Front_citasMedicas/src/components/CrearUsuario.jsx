@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 import { FaEnvelope, FaLock, FaPhone, FaUser } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const CrearUsuario = () => {
     const [formData, setFormData] = useState({
@@ -14,6 +15,8 @@ const CrearUsuario = () => {
     const [mensaje, setMensaje] = useState(null);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
+
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -121,6 +124,17 @@ const CrearUsuario = () => {
         >
             {loading ? "Registrando..." : "Registrarme"}
         </button>
+
+        <p className="text-center text-white mt-4">
+        ¿Ya tienes una cuenta?{" "}
+        <span
+            onClick={() => navigate("/login-paciente")}
+            className="text-blue-600 underline cursor-pointer"
+        >
+            Iniciar sesión
+        </span>
+        </p>
+
         </form>
     </div>
     );

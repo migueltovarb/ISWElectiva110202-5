@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 import { FaEnvelope, FaPhone, FaUser } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const CrearMedico = () => {
     const [formData, setFormData] = useState({
@@ -15,6 +16,8 @@ const CrearMedico = () => {
     const [mensaje, setMensaje] = useState(null);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
+
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -129,6 +132,17 @@ const CrearMedico = () => {
         >
             {loading ? "Registrando..." : "Registrarme"}
         </button>
+
+        <p className="text-center text-white mt-4">
+        ¿Ya tienes una cuenta?{" "}
+        <span
+            onClick={() => navigate("/login-medico")}
+            className="text-blue-600 underline cursor-pointer"
+        >
+            Iniciar sesión
+        </span>
+        </p>
+
         </form>
     </div>
     );
