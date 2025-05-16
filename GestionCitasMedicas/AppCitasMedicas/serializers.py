@@ -16,12 +16,18 @@ class PacienteSerializer(serializers.ModelSerializer):
         model = Paciente
         fields = ['id', 'telefono']
 
+class EspecialidadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Especialidad
+        fields = ['id', 'nombre']
+
 class MedicoSerializer(serializers.ModelSerializer):
     user = UsuarioSerializer()
+    especialidad = EspecialidadSerializer()
 
     class Meta:
         model = Medico
-        fields = ['id', 'user', 'especialidad', 'cedula_profesional', 'telefono', 'horario_disponible']
+        fields = ['id', 'user', 'especialidad', 'cedula_profesional', 'telefono'] #'horario_disponible']
 
 class RegistroPacienteSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(

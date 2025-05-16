@@ -34,7 +34,6 @@ from .serializers import MedicoSerializer
 from .models import Cita
 from rest_framework.permissions import IsAuthenticated
 
-
 @csrf_exempt
 def registro_paciente(request):
     if request.method == 'POST':
@@ -108,41 +107,78 @@ def activar_cuenta(request, uid, token):
 @csrf_exempt
 def registrar_medico(request):
     if request.method == 'POST':
-        data = json.loads(request.body)
+        try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Datos JSON inválidos'}, status=400)
 
         nombre = data.get('nombre')
-        especialidad = data.get('especialidad')
+        especialidad_id = data.get('especialidad')  # Espera un ID, no un texto
         cedula = data.get('cedula')
         email = data.get('email')
         telefono = data.get('telefono')
 
-        if not all([nombre, especialidad, cedula, email, telefono]):
+        # Validación básica
+        if not all([nombre, especialidad_id, cedula, email, telefono]):
             return JsonResponse({'error': 'Todos los campos son obligatorios'}, status=400)
 
+        # Validar email único
         if User.objects.filter(email=email).exists():
-            return JsonResponse({'error': 'El correo ya esta registrado'}, status=400)
+            return JsonResponse({'error': 'El correo ya está registrado'}, status=400)
 
-        from .models import Medico
+        # Validar cédula única
         if Medico.objects.filter(cedula_profesional=cedula).exists():
             return JsonResponse({'error': 'La cédula profesional ya está registrada'}, status=400)
-         
+
+        # Buscar la especialidad por ID
+        try:
+            especialidad_obj = Especialidad.objects.get(id=especialidad_id)
+        except Especialidad.DoesNotExist:
+            return JsonResponse({'error': 'La especialidad no existe'}, status=400)
+
+        # Crear usuario con contraseña aleatoria
         password_generada = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
-        user = User.objects.create_user(username=email, email=email, password=password_generada, first_name=nombre)
+        user = User.objects.create_user(
+            username=email,
+            email=email,
+            password=password_generada,
+            first_name=nombre
+        )
         user.is_active = True
         user.save()
 
+        # Crear médico asociado
         medico = Medico.objects.create(
             user=user,
-            especialidad=especialidad,
+            especialidad=especialidad_obj,
             cedula_profesional=cedula,
             telefono=telefono
         )
 
-        mensaje = f"Hola Dr. {nombre},\n\nHa sido registrado en la plataforma.\n\nCorreo: {email}\nContraseña: {password_generada}"
-        send_mail('Registro en la plataforma', mensaje, settings.DEFAULT_FROM_EMAIL, [email])
+        # Enviar correo con credenciales
+        mensaje = f"""
+Hola Dr. {nombre},
 
-        return JsonResponse({'mensaje': 'Médico registrado correctamente. Se han enviado sus credenciales al correo electrónico.'})
-    
+Ha sido registrado en la plataforma de gestión de citas médicas.
+
+Credenciales de acceso:
+Correo: {email}
+Contraseña: {password_generada}
+
+Saludos,
+Equipo de soporte
+"""
+        send_mail(
+            subject='Registro en la plataforma',
+            message=mensaje,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[email]
+        )
+
+        return JsonResponse({
+            'mensaje': 'Médico registrado correctamente. Se han enviado sus credenciales al correo electrónico.'
+        })
+
     return JsonResponse({'error': 'Método no permitido'}, status=405)
 
 class LoginMedicoView(APIView):
@@ -164,13 +200,10 @@ class LoginMedicoView(APIView):
                 return Response({'error': 'Este usuario no está registrado como médico'}, status=status.HTTP_403_FORBIDDEN)
 
             token, created = Token.objects.get_or_create(user=user)
+            serializer = MedicoSerializer(medico)
             return Response({
                 'token': token.key,
-                'medico': {
-                    'nombre': medico.nombre_completo,
-                    'especialidad': medico.especialidad,
-                    'email': user.email
-                }
+                'medico': serializer.data
             })
         else:
             return Response({'error': 'Correo o contraseña incorrectos'}, status=status.HTTP_401_UNAUTHORIZED)
