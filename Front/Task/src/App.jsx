@@ -1,8 +1,8 @@
 // src/App.jsx
 import { useEffect, useState } from "react";
 import axios from "axios";
-import CrearTarea from "./components/CrearTarea";
-import ListaTarea from "./components/ListaTarea"; // si ya tienes este componente
+import CrearTarea from "./components/CrearTarea"; // Cambia la ruta según tu estructura de carpetas
+import ListaTareas from "./components/ListaTareas"; // si ya tienes este componente
 
 function App() {
   const [tareas, setTareas] = useState([]);
