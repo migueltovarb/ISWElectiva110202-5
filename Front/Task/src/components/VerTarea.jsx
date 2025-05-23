@@ -1,4 +1,5 @@
     import { useEffect, useState } from "react";
+    import { useParams } from "react-router-dom";
     import axios from "axios";
 
 
@@ -9,12 +10,12 @@
 
     const obtenerTarea = async () => {
         try {
-        const res = await axios.get('http://localhost:8000/api/tasks/${tareaId}/');
-        setTarea(res.data);
-        } catch (error) {
-        console.error("Error al obtener tarea", error);
-        } finally {
-        setCargando(false);
+        const res = await axios.get(`http://localhost:8000/api/tasks/${tareaId}/`);
+            setTarea(res.data);
+            } catch (error) {
+            console.error("Error al obtener tarea", error);
+            } finally {
+            setCargando(false);
         }
     };
 
@@ -23,7 +24,7 @@
         if (!confirmar) return;
 
         try {
-        await axios.delete('http://localhost:8000/api/tasks/${tareaId}/');
+        await axios.delete(`http://localhost:8000/api/tasks/${tareaId}/`);
         onActualizar();    
         onVolver();        
         } catch (error) {
@@ -63,18 +64,18 @@
         </div>
         <div className="flex gap-3 mt-6">
             <button
-            onClick={eliminarTarea}
-            className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition"
-            >
-            Eliminar
-            </button>
-            <button
-            onClick={onVolver}
-            className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500 transition"
-            >
-            Volver
-            </button>
-        </div>
+                onClick={eliminarTarea}
+                className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition"
+                >
+                Eliminar
+                    </button>
+                <button
+                onClick={onVolver}
+                className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500 transition"
+                >
+                Volver
+                </button>
+            </div>
         </div>
         );
     }
