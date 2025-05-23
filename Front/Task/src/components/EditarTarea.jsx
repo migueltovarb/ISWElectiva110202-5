@@ -20,7 +20,7 @@ export default function EditarTarea({ tareaSeleccionada, onActualizar, onCancela
         );
         setTitulo("");
         onActualizar();
-      onCancelarEdicion(); // limpia la tarea seleccionada
+        onCancelarEdicion(); 
     } catch (error) {
         console.error("Error al editar la tarea", error);
     }
