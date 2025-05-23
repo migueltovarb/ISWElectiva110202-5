@@ -1,11 +1,14 @@
-// src/App.jsx
 import { useEffect, useState } from "react";
 import axios from "axios";
-import CrearTarea from "./components/CrearTarea"; // Cambia la ruta según tu estructura de carpetas
-import ListaTareas from "./components/ListaTareas"; // si ya tienes este componente
+import CrearTarea from "./components/CrearTarea";
+import EditarTarea from "./components/EditarTarea";
+import ListaTareas from "./components/ListaTareas";
+import VerTarea from "./components/VerTarea";
 
 function App() {
   const [tareas, setTareas] = useState([]);
+  const [tareaSeleccionada, setTareaSeleccionada] = useState(null); 
+  const [tareaAVer, setTareaAVer] = useState(null); 
 
   const obtenerTareas = async () => {
     try {
@@ -23,8 +26,34 @@ function App() {
   return (
     <div className="max-w-xl mx-auto mt-10">
       <h1 className="text-2xl font-bold mb-4 text-center">Gestor de Tareas</h1>
-      <CrearTarea onTareaCreada={obtenerTareas} />
-      <ListaTarea tareas={tareas} onActualizar={obtenerTareas} />
+
+      {tareaAVer && (
+        <VerTarea
+          tarea={tareaAVer}
+          onCerrar={() => setTareaAVer(null)}
+        />
+      )}
+
+      {!tareaAVer && (
+        <>
+          {tareaSeleccionada ? (
+            <EditarTarea
+              tareaSeleccionada={tareaSeleccionada}
+              onActualizar={obtenerTareas}
+              onCancelarEdicion={() => setTareaSeleccionada(null)}
+            />
+          ) : (
+            <CrearTarea onTareaCreada={obtenerTareas} />
+          )}
+
+          <ListaTareas
+            tareas={tareas}
+            onActualizar={obtenerTareas}
+            onSeleccionarTarea={setTareaSeleccionada}
+            onVerTarea={setTareaAVer} 
+          />
+        </>
+      )}
     </div>
   );
 }
