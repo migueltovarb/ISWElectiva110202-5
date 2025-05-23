@@ -12,7 +12,7 @@ export default function CrearTarea() {
                 title: titulo,
             };
 
-            await axios.post("http://localhost:8000/tareas", nuevaTarea);
+            await axios.post("http://localhost:8000/api/tasks/", nuevaTarea);
             setTitulo("");
             onTareaCreada();
         } catch (error) {
