@@ -26,8 +26,8 @@ function ListaTareas({ tareas, onActualizar, onSeleccionarTarea, onVerTarea }) {
           className="bg-white shadow-md rounded-lg p-4 flex flex-col md:flex-row md:items-center justify-between hover:shadow-lg transition-shadow"
         >
           <div>
-            <h3 className="text-lg font-semibold text-gray-800">{tarea.titulo}</h3>
-            <p className="text-gray-600">{tarea.descripcion}</p>
+            <h3 className="text-lg font-semibold text-gray-800">{tarea.title}</h3>
+            <p className="text-gray-600">{tarea.description}</p>
           </div>
           <div className="flex mt-4 md:mt-0 md:ml-4 space-x-2">
             <button
