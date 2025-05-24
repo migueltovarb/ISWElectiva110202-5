@@ -20,6 +20,7 @@ export default function VerTarea({ Id: tareaIdProp, onVolver, onActualizar }) {
       try {
         const res = await axios.get(`http://localhost:8000/api/tasks/${Id}/`);
         setTarea(res.data);
+        console.log("Respuesta del backend:", res.data);
       } catch (error) {
         console.error("Error al obtener tarea", error.response ? error.response.data : error);
         setTarea(null);
@@ -44,6 +45,8 @@ export default function VerTarea({ Id: tareaIdProp, onVolver, onActualizar }) {
 
   if (cargando) return <div className="text-center py-8">Cargando tarea...</div>;
   if (!tarea) return <div className="text-center py-8 text-red-600">No se encontró la tarea.</div>;
+
+  console.log("Tarea a ver:", tarea);
 
   return (
     <div className="border p-6 rounded-xl shadow-lg bg-white max-w-lg mx-auto mt-6">

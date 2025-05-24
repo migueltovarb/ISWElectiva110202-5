@@ -70,8 +70,8 @@ function App() {
         {/* Vista de tarea */}
         {tareaAVer && (
           <VerTarea
-            tarea={tareaAVer}
-            onCerrar={() => setTareaAVer(null)}
+            Id={tareaAVer?.id}
+            onVolver={() => setTareaAVer(null)}
           />
         )}
 
