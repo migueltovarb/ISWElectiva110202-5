@@ -1,7 +1,8 @@
-import React from "react";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import RegistrarPaciente from './components/CrearUsuario';
 import RegistrarMedico from './components/CrearMedico';
+import LoginPaciente from './components/LoginPaciente';
+import LoginMedico from './components/LoginMedico';
 
 function App() {
   return (
@@ -10,6 +11,22 @@ function App() {
         <h1 className="text-4xl md:text-5xl text-white font-bold text-center mt-9 mb-4 drop-shadow-lg">Plataforma Citas Médica</h1>
 
         <nav className="flex flex-col md:flex-row justify-center gap-4 mt-6">
+          
+            <button
+            onClick={() => (window.location.href = "/login-paciente")}
+            className="flex items-center gap-2 bg-cyan-700 text-white px-6 py-3 rounded-xl hover:bg-cyan-600 transition-all duration-300 shadow-lg hover:scale-105"
+          >
+            Iniciar Sesión Paciente
+          </button>
+
+          <button
+            onClick={() => (window.location.href = "/login-medico")}
+            className="flex items-center gap-2 bg-indigo-700 text-white px-6 py-3 rounded-xl hover:bg-indigo-600 transition-all duration-300 shadow-lg hover:scale-105"
+        > 
+          Iniciar Sesión Médico
+          </button>
+
+
           <button
             onClick={() => (window.location.href = "/registrar-paciente")}
             className="flex items-center gap-2 bg-cyan-700 text-white px-6 py-3 rounded-xl hover:bg-cyan-600 transition-all duration-300 shadow-lg hover:scale-105"
@@ -30,6 +47,8 @@ function App() {
           <Routes>
           <Route path="/registrar-paciente" element={<RegistrarPaciente />} />
           <Route path="/registrar-medico" element={<RegistrarMedico />} />
+          <Route path="/login-paciente" element={<LoginPaciente />} />
+          <Route path="/login-medico" element={<LoginMedico />} />
         </Routes>
         </div>
       </div>
