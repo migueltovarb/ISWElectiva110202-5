@@ -51,7 +51,7 @@ def registro_paciente(request):
             return JsonResponse({'error': 'El correo ya está registrado'}, status=400)
 
         if len(password) < 8 or not re.search(r'[A-Za-z]', password) or not re.search(r'\d', password):
-            return JsonResponse({'error': 'La contraseña debe tener al menos 8 caracteres, incluyendo letras y números'}, status=400)
+            return JsonResponse({'error': 'La contraseña debe tener  al menos 8 caracteres, incluyendo letras y números'}, status=400)
 
         
         user = User.objects.create_user(username=email, email=email, password=password, first_name=nombre_completo)
