@@ -75,7 +75,7 @@ const Sidebar = ({ userName, avatarUrl, currentSection, setSection }) => {
   );
 };
 
-// Header component
+
 const Header = () => (
   <header className="h-16 flex items-center justify-between px-8 border-b bg-white">
     <nav className="flex gap-8">
@@ -90,7 +90,7 @@ const Header = () => (
   </header>
 );
 
-// Mis Citas
+
 const MisCitas = ({ apiUrl = import.meta.env.VITE_API_URL }) => {
   const [appointments, setAppointments] = useState([]);
   const [stats, setStats] = useState({});
@@ -101,7 +101,7 @@ const MisCitas = ({ apiUrl = import.meta.env.VITE_API_URL }) => {
 
   useEffect(() => {
     fetchAppointments();
-    // eslint-disable-next-line
+   
   }, [apiUrl]);
 
   const fetchAppointments = async () => {
@@ -118,7 +118,7 @@ const MisCitas = ({ apiUrl = import.meta.env.VITE_API_URL }) => {
           }
         }
       );
-      // Soporta ambos formatos: { appointments: [...] } o array directo
+     
       setAppointments(res.data.appointments || res.data.results || res.data || []);
       setStats(res.data.statistics || {});
     } catch (err) {
@@ -238,7 +238,7 @@ const MisCitas = ({ apiUrl = import.meta.env.VITE_API_URL }) => {
   );
 };
 
-// Cancelar Citas
+
 const CancelarCitas = ({ apiUrl = import.meta.env.VITE_API_URL }) => {
   const [citas, setCitas] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -246,7 +246,7 @@ const CancelarCitas = ({ apiUrl = import.meta.env.VITE_API_URL }) => {
   const [mensaje, setMensaje] = useState('');
   const [selected, setSelected] = useState(null);
 
-  // Obtener todas las citas del paciente
+
   const fetchCitas = async () => {
     setLoading(true);
     setError('');
@@ -261,7 +261,7 @@ const CancelarCitas = ({ apiUrl = import.meta.env.VITE_API_URL }) => {
           }
         }
       );
-      // Soporta ambos formatos: { appointments: [...] } o array directo
+    
       const data = Array.isArray(response.data)
         ? response.data
         : Array.isArray(response.data.appointments)
@@ -279,10 +279,10 @@ const CancelarCitas = ({ apiUrl = import.meta.env.VITE_API_URL }) => {
 
   useEffect(() => {
     fetchCitas();
-    // eslint-disable-next-line
+
   }, [apiUrl, mensaje]);
 
-  // Cancelar cita usando la URL correcta con el ID
+ 
   const cancelarCita = async (id) => {
   setMensaje('');
   setError('');
@@ -291,7 +291,7 @@ const CancelarCitas = ({ apiUrl = import.meta.env.VITE_API_URL }) => {
     const token = localStorage.getItem('auth_token');
     await axios.patch(
       `${apiUrl}appointments/patient/appointments/${id}/cancel/`,
-      {}, // puedes enviar { reason: "Cancelada por el paciente" } si quieres
+      {}, 
       {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -300,7 +300,7 @@ const CancelarCitas = ({ apiUrl = import.meta.env.VITE_API_URL }) => {
       }
     );
     setMensaje('Cita cancelada correctamente.');
-    fetchCitas(); // Refresca la lista tras cancelar
+    fetchCitas(); 
   } catch (err) {
     setError(
       err.response?.data?.error ||
@@ -365,7 +365,7 @@ const CancelarCitas = ({ apiUrl = import.meta.env.VITE_API_URL }) => {
   );
 };
 
-// Configuración
+
 const Configuracion = ({ apiUrl = import.meta.env.VITE_API_URL }) => {
   const [profile, setProfile] = useState({
     full_name: localStorage.getItem('user_full_name') || '',
@@ -406,7 +406,7 @@ const Configuracion = ({ apiUrl = import.meta.env.VITE_API_URL }) => {
       );
 
       setSuccessMsg('Perfil actualizado correctamente');
-      // Actualizar localStorage con los nuevos datos
+     
       localStorage.setItem('user_full_name', profile.full_name);
       localStorage.setItem('user_email', profile.email);
       localStorage.setItem('user_phone', profile.phone);
@@ -482,3 +482,218 @@ const Configuracion = ({ apiUrl = import.meta.env.VITE_API_URL }) => {
     </div>
   );
 };
+const AgendarCita = ({ apiUrl = import.meta.env.VITE_API_URL }) => {
+  const [especialidades, setEspecialidades] = useState([]);
+  const [medicos, setMedicos] = useState([]);
+  const [selectedEspecialidad, setSelectedEspecialidad] = useState('');
+  const [selectedMedico, setSelectedMedico] = useState('');
+  const [fecha, setFecha] = useState('');
+  const [hora, setHora] = useState('');
+  const [motivo, setMotivo] = useState('');
+  const [duracion, setDuracion] = useState(30);
+  const [error, setError] = useState('');
+  const [mensaje, setMensaje] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(true);
+
+  // Verificar autenticación al cargar el componente
+  useEffect(() => {
+    const checkAuthentication = () => {
+      const token = localStorage.getItem('auth_token');
+      const tokenExists = !!token;
+      
+      console.log('Verificando autenticación:', {
+        token: token ? 'Presente' : 'Ausente',
+        tokenLength: token ? token.length : 0
+      });
+      
+      setIsAuthenticated(tokenExists);
+      setCheckingAuth(false);
+    };
+
+    checkAuthentication();
+    
+    // Escuchar cambios en localStorage (cuando se hace login en otra pestaña)
+    window.addEventListener('storage', checkAuthentication);
+    
+    return () => {
+      window.removeEventListener('storage', checkAuthentication);
+    };
+  }, []);
+
+  // Función para configurar axios con el token
+  const getAuthHeaders = () => {
+    const token = localStorage.getItem('auth_token');
+    if (!token) {
+      throw new Error('No hay token de autenticación');
+    }
+    return {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    };
+  };
+
+  // Cargar especialidades
+  useEffect(() => {
+    const fetchEspecialidades = async () => {
+      try {
+        setIsLoading(true);
+        setError('');
+        
+        // URL corregida según tus urlpatterns
+        const response = await axios.get(`${apiUrl}auth/specialties/`, {
+          headers: getAuthHeaders()
+        });
+        
+        console.log('Especialidades response:', response.data);
+        setEspecialidades(response.data);
+      } catch (err) {
+        console.error('Error fetching especialidades:', err);
+        
+        if (err.response?.status === 401) {
+          setError('Sesión expirada. Por favor, inicia sesión nuevamente.');
+          setIsAuthenticated(false);
+          localStorage.removeItem('auth_token');
+        } else {
+          setError('Error al cargar las especialidades: ' + (err.response?.data?.detail || err.message));
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    // Solo hacer la petición si está autenticado
+    if (isAuthenticated) {
+      fetchEspecialidades();
+    } else {
+      setError('Debes iniciar sesión para ver las especialidades');
+    }
+  }, [apiUrl, isAuthenticated]);
+
+  // Cargar médicos según especialidad
+  useEffect(() => {
+    const fetchMedicos = async () => {
+      if (selectedEspecialidad) {
+        try {
+          setIsLoading(true);
+          setError('');
+          
+          // URL corregida según tus urlpatterns
+          const response = await axios.get(
+            `${apiUrl}auth/doctors/?specialty=${selectedEspecialidad}`,
+            {
+              headers: getAuthHeaders()
+            }
+          );
+          
+          console.log('Médicos response:', response.data);
+          setMedicos(response.data);
+          setSelectedMedico('');
+        } catch (err) {
+          console.error('Error fetching médicos:', err);
+          
+          if (err.response?.status === 401) {
+            setError('Sesión expirada. Por favor, inicia sesión nuevamente.');
+            setIsAuthenticated(false);
+            localStorage.removeItem('auth_token');
+          } else {
+            setError('Error al cargar los médicos: ' + (err.response?.data?.detail || err.message));
+          }
+        } finally {
+          setIsLoading(false);
+        }
+      } else {
+        setMedicos([]);
+        setSelectedMedico('');
+      }
+    };
+    
+    fetchMedicos();
+  }, [selectedEspecialidad, apiUrl]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setMensaje('');
+    setIsLoading(true);
+
+    try {
+      const citaData = {
+        doctor_id: parseInt(selectedMedico), // Asegurar que sea número
+        appointment_date: fecha,
+        appointment_time: hora,
+        reason: motivo,
+        duration: duracion // Opcional si tu backend lo maneja
+      };
+
+      console.log('Enviando datos de cita:', citaData);
+
+      const response = await axios.post(
+        `${apiUrl}appointments/create/`,
+        citaData,
+        {
+          headers: getAuthHeaders()
+        }
+      );
+
+      console.log('Respuesta del servidor:', response.data);
+      
+      setMensaje(response.data.mensaje || response.data.message || "Cita agendada correctamente.");
+      setError('');
+      
+      // Limpiar formulario
+      setSelectedEspecialidad('');
+      setSelectedMedico('');
+      setFecha('');
+      setHora('');
+      setMotivo('');
+      setMedicos([]);
+      
+    } catch (err) {
+      console.error('Error al agendar cita:', err);
+      
+      if (err.response?.status === 401) {
+        setError('Sesión expirada. Por favor, inicia sesión nuevamente.');
+        setIsAuthenticated(false);
+        localStorage.removeItem('auth_token');
+      } else {
+        const msg = 
+          err.response?.data?.detail ||
+          err.response?.data?.non_field_errors?.[0] ||
+          err.response?.data?.mensaje ||
+          err.response?.data?.message ||
+          err.message ||
+          'Error al agendar la cita';
+        setError(msg);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Función para manejar el re-login
+  const handleRelogin = () => {
+    // Opción 1: Redirigir a la página de login (si tienes React Router)
+    // window.location.href = '/login';
+    
+    // Opción 2: Recargar la página actual (si el login está en la misma app)
+    window.location.reload();
+    
+    // Opción 3: Si tienes un modal de login, lo puedes abrir aquí
+    // setShowLoginModal(true);
+  };
+
+  // Mostrar loading mientras verifica autenticación
+  if (checkingAuth) {
+    return (
+      <div className="w-full flex flex-col items-center justify-center min-h-[calc(100vh-4rem)]">
+        <div className="max-w-md w-full p-6 bg-white shadow-lg rounded-xl mt-10">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-700 mx-auto mb-4"></div>
+            <p className="text-gray-600">Verificando autenticación...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
