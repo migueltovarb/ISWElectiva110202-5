@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // Sidebar mejorado
@@ -672,19 +672,15 @@ const AgendarCita = ({ apiUrl = import.meta.env.VITE_API_URL }) => {
     }
   };
 
-  // Función para manejar el re-login
+  
   const handleRelogin = () => {
-    // Opción 1: Redirigir a la página de login (si tienes React Router)
-    // window.location.href = '/login';
     
-    // Opción 2: Recargar la página actual (si el login está en la misma app)
     window.location.reload();
     
-    // Opción 3: Si tienes un modal de login, lo puedes abrir aquí
-    // setShowLoginModal(true);
+    
   };
 
-  // Mostrar loading mientras verifica autenticación
+
   if (checkingAuth) {
     return (
       <div className="w-full flex flex-col items-center justify-center min-h-[calc(100vh-4rem)]">
@@ -697,3 +693,179 @@ const AgendarCita = ({ apiUrl = import.meta.env.VITE_API_URL }) => {
       </div>
     );
   }
+ 
+  if (!isAuthenticated) {
+    return (
+      <div className="w-full flex flex-col items-center justify-center min-h-[calc(100vh-4rem)]">
+        <div className="max-w-md w-full p-6 bg-white shadow-lg rounded-xl mt-10">
+          <h1 className="text-2xl font-bold text-center text-indigo-700 mb-4">Acceso Restringido</h1>
+          <div className="text-center">
+            <p className="text-gray-600 mb-4">Debes iniciar sesión para agendar una cita.</p>
+            
+            {}
+            <div className="mb-4 p-2 bg-gray-100 rounded text-xs text-left">
+              <p><strong>Debug Info:</strong></p>
+              <p>Token presente: {localStorage.getItem('auth_token') ? 'Sí' : 'No'}</p>
+              <p>Token length: {localStorage.getItem('auth_token')?.length || 0}</p>
+              <p>Usuario: {localStorage.getItem('user_full_name') || 'No definido'}</p>
+            </div>
+            
+            <div className="space-y-3">
+              <button 
+                onClick={handleRelogin}
+                className="w-full bg-indigo-700 text-white px-6 py-2 rounded-lg hover:bg-indigo-800"
+              >
+                Iniciar Sesión
+              </button>
+              
+              <button 
+                onClick={() => window.location.reload()}
+                className="w-full bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600"
+              >
+                Recargar Página
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-full flex flex-col items-center justify-center min-h-[calc(100vh-4rem)]">
+      <div className="max-w-md w-full p-6 bg-white shadow-lg rounded-xl mt-10">
+        <h1 className="text-2xl font-bold text-center text-indigo-700 mb-2">Agendar Cita</h1>
+        
+        {}
+        <div className="mb-4 p-2 bg-gray-100 rounded text-xs">
+          <p><strong>Estado actual:</strong></p>
+          <p>Autenticado: {isAuthenticated ? 'Sí' : 'No'}</p>
+          <p>Token presente: {localStorage.getItem('auth_token') ? 'Sí' : 'No'}</p>
+          <p>Usuario: {localStorage.getItem('user_full_name') || 'No definido'}</p>
+        </div>
+        
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-gray-900 font-medium mb-2">Especialidad</label>
+            <select
+              value={selectedEspecialidad}
+              onChange={(e) => setSelectedEspecialidad(e.target.value)}
+              required
+              className="w-full border border-gray-300 rounded-lg p-2"
+              disabled={isLoading}
+            >
+              <option value="">Seleccione una especialidad</option>
+              {especialidades.map((esp, index) => (
+                <option key={esp.id || esp.value || index} value={esp.id || esp.value}>
+                  {esp.name || esp.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-gray-900 font-medium mb-2">Médico</label>
+            <select
+              value={selectedMedico}
+              onChange={(e) => setSelectedMedico(e.target.value)}
+              required
+              className="w-full border border-gray-300 rounded-lg p-2"
+              disabled={!selectedEspecialidad || isLoading}
+            >
+              <option value="">Seleccione un médico</option>
+              {medicos.map((medico, index) => (
+                <option key={medico.id || index} value={medico.id}>
+                  {medico.user?.full_name || 
+                   `${medico.user?.first_name} ${medico.user?.last_name}` ||
+                   medico.full_name ||
+                   `${medico.first_name} ${medico.last_name}` ||
+                   'Médico sin nombre'}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-gray-900 font-medium mb-2">Fecha</label>
+            <input
+              type="date"
+              value={fecha}
+              onChange={(e) => setFecha(e.target.value)}
+              min={new Date().toISOString().split('T')[0]}
+              required
+              className="w-full border border-gray-300 rounded-lg p-2"
+              disabled={isLoading}
+            />
+          </div>
+
+          <div>
+            <label className="block text-gray-900 font-medium mb-2">Hora</label>
+            <input
+              type="time"
+              value={hora}
+              onChange={(e) => setHora(e.target.value)}
+              required
+              className="w-full border border-gray-300 rounded-lg p-2"
+              disabled={isLoading}
+            />
+          </div>
+
+          <div>
+            <label className="block text-gray-900 font-medium mb-2">Motivo</label>
+            <textarea
+              value={motivo}
+              onChange={(e) => setMotivo(e.target.value)}
+              required
+              className="w-full border border-gray-300 rounded-lg p-2 h-20 resize-none"
+              disabled={isLoading}
+              placeholder="Describe el motivo de tu consulta..."
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="w-full bg-indigo-700 text-white font-medium py-2 rounded-lg hover:bg-indigo-800 transition disabled:opacity-50"
+            disabled={isLoading || !selectedEspecialidad || !selectedMedico}
+          >
+            {isLoading ? 'Procesando...' : 'Confirmar Cita'}
+          </button>
+        </form>
+
+        {mensaje && (
+          <div className="mt-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded-lg">
+            {mensaje}
+          </div>
+        )}
+        
+        {error && (
+          <div className="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+            {error}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+const HomePaciente = () => {
+  const userName = localStorage.getItem('user_full_name') || 'Usuario';
+  const avatarUrl = localStorage.getItem('user_avatar') || 'https://randomuser.me/api/portraits/men/32.jpg';
+  const [section, setSection] = useState('mis-citas');
+
+  return (
+    <div className="flex h-screen bg-gray-50">
+      <Sidebar userName={userName} avatarUrl={avatarUrl} currentSection={section} setSection={setSection} />
+      <div className="flex-1 flex flex-col">
+        <Header />
+        <main className="flex-1 flex flex-col items-center justify-center bg-gray-50 p-8">
+          {section === 'mis-citas' && <MisCitas />}
+          {section === 'agendar' && <AgendarCita />}
+          {section === 'cancelar' && <CancelarCitas />}
+          {section === 'configuracion' && <Configuracion />}
+        </main>
+      </div>
+    </div>
+  );
+};
+
+export default HomePaciente;
